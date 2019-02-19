@@ -5,6 +5,16 @@ namespace RBruteForce\Controller\Component;
 use Cake\Controller\Component;
 use Cake\ORM\TableRegistry;
 
+/**
+ * Class RBruteForceComponent
+ * @package RBruteForce\Controller\Component
+ *
+ * @property \Cake\Controller\Controller $_controller
+ * @property \Cake\Http\ServerRequest    $_request
+ * @property \Cake\Http\Response         $_response
+ *
+ * @property \RBruteForce\Model\Table\RbruteforcesTable $RBruteForce
+ */
 class RBruteForceComponent extends Component
 {
 
@@ -14,12 +24,13 @@ class RBruteForceComponent extends Component
         'dataLog'         => false,       //log the user submitted data
         'attemptLog'      => 'all',       //all|beforeBan
         'checkUrl'        => true,        //check url or not
-        'cleanupAttempts' => 1000,        //delete all old entries from attempts database if there are more
-                                          //rows that this. This should be bigger than maxAttempts.
+        'cleanupAttempts' => 1000,        //delete all old entries from attempts database if there are more rows that this. This should be bigger than maxAttempts.
         'urlToRedirect'   => '/r_brute_force/Rbruteforces/failed' //url to redirect if failed.
     ];
 
     private $isBanned = true;
+
+    private $_controller, $_request, $_response;
 
     /**
      * Initialize properties.
@@ -29,12 +40,12 @@ class RBruteForceComponent extends Component
      */
     public function initialize(array $config)
     {
-        $this->controller = $this->_registry->getController();
-        $this->request = $this->controller->request;
-        $this->response = $this->controller->response;
-        //$this->session = $this->controller->request->session();
+        $this->_controller = $this->_registry->getController();
+        $this->_request    = $this->_controller->getRequest();
+        $this->_response   = $this->_controller->getResponse();
+        //$this->session     = $this->_request->getSession();
 
-        $this->RBruteForce = TableRegistry::get('RBruteForce.Rbruteforces');
+        $this->RBruteForce = TableRegistry::getTableLocator()->get('RBruteForce.Rbruteforces');
     }
 
     /**
@@ -54,8 +65,8 @@ class RBruteForceComponent extends Component
 
         if ($this->options['attemptLog'] == 'all' ||
             ($this->options['attemptLog'] == 'beforeBan' && !$this->isBanned)) {
-            $attempt = ['ip' => $this->request->env('REMOTE_ADDR'),
-                'url' => $this->request->url,
+            $attempt = ['ip' => $this->_request->getEnv('REMOTE_ADDR'),
+                'url'    => $this->_request->getRequestTarget(),
                 'expire' => strtotime('+' . $this->options['expire']),
             ];
             $attempt = $this->RBruteForce->newEntity($attempt);
@@ -63,12 +74,12 @@ class RBruteForceComponent extends Component
         }
 
         if ($this->options['dataLog']) {
-            $this->dataLog($this->request->data);
+            $this->dataLog($this->_request->getData());
         }
 
         if ($this->isBanned) {
             $this->delay();
-            $this->controller->redirect($this->options['urlToRedirect']);
+            $this->_controller->redirect($this->options['urlToRedirect']);
         }
 
         $this->RBruteForce->cleanupAttempts($this->options['cleanupAttempts']);
@@ -81,7 +92,7 @@ class RBruteForceComponent extends Component
      */
     public function incrementExpire()
     {
-        $expire = explode(' ', $this->options['expire']);
+        $expire                  = explode(' ', $this->options['expire']);
         $this->options['expire'] = $expire[0] + $this->getCount() . ' ' . $expire[1];
         return $this->options['expire'];
     }
@@ -106,7 +117,7 @@ class RBruteForceComponent extends Component
     public function isIpBanned($options = [])
     {
         $this->options = array_merge($this->options, $options);
-        return ($this->getCount() >= $this->options['maxAttempts']) ? true : false;
+        return (bool)$this->getCount() >= $this->options['maxAttempts'];
     }
 
     /**
@@ -117,23 +128,27 @@ class RBruteForceComponent extends Component
     public function getCount()
     {
         $count = $this->RBruteForce->find()
-            ->where(['ip' => $this->request->env('REMOTE_ADDR')])
+            ->where(['ip' => $this->_request->getEnv('REMOTE_ADDR')])
             ->andWhere(['expire >= ' => time()])
             ->andWhere(['expire <= ' => strtotime('+' . $this->options['expire'])]);
         if ($this->options['checkUrl']) {
-            $count = $count->andWhere(['url' => $this->request->url]);
+            $count = $count->andWhere(['url' => $this->_request->getRequestTarget()]);
         }
         $count = $count->count();
         return $count;
     }
 
+    /**
+     * Update table reference to cake 3+
+     * Old version use: $dataLog = TableRegistry::get('rbruteforcelogs');
+     *
+     * @param $data
+     * @return bool
+     */
     public function dataLog($data)
     {
-        $dataLog = TableRegistry::get('rbruteforcelogs');
-        $data = $dataLog->newEntity(['data' => serialize($data)]);
-        if ($dataLog->save($data)) {
-            return true;
-        }
-        return false;
+        $dataLog = TableRegistry::getTableLocator()->get('rbruteforcelogs');
+        $data    = $dataLog->newEntity(['data' => serialize($data)]);
+        return (bool)$dataLog->save($data);
     }
 }

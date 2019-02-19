@@ -1,7 +1,7 @@
 rBruteForce
 ===========
 
-CakePHP 3 Plugin for Protection Against BruteForce Attacks
+CakePHP 3+ Plugin for Protection Against BruteForce Attacks
 
 # CakePHP rBruteForce Plugin
 
@@ -9,8 +9,8 @@ With rBruteForce you could protect your CakePHP applications from Brute Force at
 
 ## Requirements
 
-* CakePHP 3.0.0 or greater.
-* PHP 5.4.16 or greater.
+* CakePHP 3.7 or greater.
+* PHP 5.6 or greater.
 
 ## Installation
 
