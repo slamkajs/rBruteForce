@@ -83,6 +83,8 @@ class RBruteForceComponent extends Component
         }
 
         $this->RBruteForce->cleanupAttempts($this->options['cleanupAttempts']);
+        
+        return $this->isBanned;
     }
 
     /**
