@@ -30,7 +30,16 @@ Or add the plugin to your project's `composer.json` - something like this:
 }
 ````
 
-### 2. Establish the database schema.
+### 2. Load the plugin
+````bash
+bin/cake plugin load RBruteForce -r
+````
+Or add the following to `src/Application.php`.
+```php
+Plugin::load('RBruteForce', ['bootstrap' => false, 'routes' => true]);
+```
+
+### 3. Establish the database schema.
 via CLI
 ````bash
 bin/cake migrations migrate -p RBruteForce
@@ -54,15 +63,6 @@ CREATE TABLE IF NOT EXISTS `rbruteforces` (
 ```
 
 The migrations files could be found in `config/Migrations`.
-
-### 3. Load the plugin
-````bash
-bin/cake plugin load RBruteForce -r
-````
-Or add the following to `src/Application.php`.
-```php
-Plugin::load('RBruteForce', ['bootstrap' => false, 'routes' => true]);
-```
 
 ### .gitignore
 Because this plugin has the type cakephp-plugin set in it's own composer.json, composer knows to install it inside your /Plugin directory, rather than in the usual vendors file. It is recommended that you add /Plugin/RBruteForce to your .gitignore file.
