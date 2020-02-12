@@ -17,13 +17,12 @@ With rBruteForce you could protect your CakePHP applications from Brute Force at
 ### 1. Install the plugin.
 
 #### Install via composer. 
-
-Add the plugin to your project's `composer.json` - something like this:
-
+Via CLI
 ````cli
 composer require slamkajs/rbruteforce3
 ````
 OR
+Add the plugin to your project's `composer.json` - something like this:
 ````json
 {
   "require": {
