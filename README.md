@@ -21,8 +21,7 @@ Via CLI
 ````cli
 composer require slamkajs/rbruteforce3
 ````
-OR
-Add the plugin to your project's `composer.json` - something like this:
+Or add the plugin to your project's `composer.json` - something like this:
 ````json
 {
   "require": {
@@ -31,8 +30,11 @@ Add the plugin to your project's `composer.json` - something like this:
 }
 ````
 
-### 1. Create the database tables.
-
+### 2. Establish the database schema.
+via CLI
+````cli
+bin/cake migrations migrate -p RBruteForce
+````
 The schema could be found in `config/Schema/rBruteForce.sql`.
 
 ```sql
