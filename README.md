@@ -14,6 +14,24 @@ With rBruteForce you could protect your CakePHP applications from Brute Force at
 
 ## Installation
 
+### 1. Install the plugin.
+
+#### Install via composer. 
+
+Add the plugin to your project's `composer.json` - something like this:
+
+````cli
+composer require slamkajs/rbruteforce3
+````
+OR
+````json
+{
+  "require": {
+    "slamkajs/rbruteforce3": "*"
+  }
+}
+````
+
 ### 1. Create the database tables.
 
 The schema could be found in `config/Schema/rBruteForce.sql`.
@@ -59,18 +77,6 @@ public function change()
 	$table->update();
 }
 ```
-
-### Install via composer. 
-
-Add the plugin to your project's `composer.json` - something like this:
-
-````json
-{
-  "require": {
-    "egcservices/rbruteforce2": "*"
-  }
-}
-````
 
 ### Load the plugin
 
