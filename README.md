@@ -9,7 +9,7 @@ With rBruteForce you could protect your CakePHP applications from Brute Force at
 
 ## Requirements
 
-* CakePHP 3.7 or greater.
+* CakePHP 3.8 or greater.
 * PHP 5.6 or greater.
 
 ## Installation
