@@ -106,6 +106,10 @@ public function initialize()
 public function login() 
 {	
 	if ($this->request->is('post')) {
+		if ($this->RBruteForce->isIpBanned($this->_options)) {
+			$this->Flash->error(__("Please, wait {$this->_options['expire']} to try login again!'));
+		}
+		
 		$myIp = $_SERVER['REMOTE_ADDR'];
 		if (!$this->RBruteForce->isIpBanned($this->_options) || in_array($myIp, $this->_ipsAllowed)) {
 			$user = $this->Auth->identify();
@@ -113,14 +117,12 @@ public function login()
 				$this->Auth->setUser($user);
 				return $this->redirect($this->Auth->redirectUrl());
 			}
-			$this->RBruteForce->check($this->_options); //unsuccessful logins will be checked
-			$this->Flash->error(__('Invalid username or password, try again'));
+			$_is_banned = $this->RBruteForce->check($this->_options);	//unsuccessful logins will be checked
+			if(!$_is_banned) {
+				$this->Flash->error(__('Invalid username or password, try again'));
+			}
 		} else {
 			$this->Flash->error(__("Please, wait {$this->_options['expire']} to try login again!'));	
-		}
-	} else {
-		if ($this->RBruteForce->isIpBanned($this->_options)) {
-			$this->Flash->error(__("Please, wait {$this->_options['expire']} to try login again!'));
 		}
 	}
 }
