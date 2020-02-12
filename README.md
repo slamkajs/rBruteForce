@@ -18,7 +18,7 @@ With rBruteForce you could protect your CakePHP applications from Brute Force at
 
 #### Install via composer. 
 Via CLI
-````cli
+````bash
 composer require slamkajs/rbruteforce3
 ````
 Or add the plugin to your project's `composer.json` - something like this:
@@ -32,7 +32,7 @@ Or add the plugin to your project's `composer.json` - something like this:
 
 ### 2. Establish the database schema.
 via CLI
-````cli
+````bash
 bin/cake migrations migrate -p RBruteForce
 ````
 The schema could be found in `config/Schema/rBruteForce.sql`.
@@ -55,32 +55,11 @@ CREATE TABLE IF NOT EXISTS `rbruteforces` (
 
 The migrations files could be found in `config/Migrations`.
 
-```
-//CreateRBruteForces Migration
-public function change()
-{
-	$table = $this->table('rbruteforces', ['id' => false, 'primary_key' => ['expire']]);
-	$table
-		->addColumn('ip', 'string', ['length' => 255])
-		->addColumn('url', 'string', ['length' => 255])
-		->addColumn('expire', 'timestamp', ['default' => null])
-		->addIndex('ip');
-	$table->create();
-}
-  
-//CreateRBruteForceLogs Migration
-public function change()
-{
-	$table = $this->table('rbruteforcelogs');
-	$table->addColumn('data', 'text', ['null' => true]);
-	$table->create();
-	$table->changeColumn('id', 'integer', ['signed' => false, 'identity' => true]);
-	$table->update();
-}
-```
-
-### Load the plugin
-
+### 3. Load the plugin
+````bash
+bin/cake plugin load RBruteForce -r
+````
+Or add the following to `src/Application.php`.
 ```php
 Plugin::load('RBruteForce', ['bootstrap' => false, 'routes' => true]);
 ```
